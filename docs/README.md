@@ -33,8 +33,8 @@ This phase focuses on planning the entire project before implementation.
 | Module | Document | Status |
 |---------|----------|--------|
 | 0.1 | Product Vision | ✅ Completed |
-| 0.2 | Functional Requirements | ⏳ In Progress |
-| 0.3 | Non-Functional Requirements | ⏳ Pending |
+| 0.2 | Functional Requirements | ✅ Completed |
+| 0.3 | Non-Functional Requirements | ✅ Completed |
 | 0.4 | User Stories & Use Cases | ⏳ Pending |
 | 0.5 | Scope & Prioritization | ⏳ Pending |
 | 0.6 | Technology Decisions | ⏳ Pending |
@@ -189,4 +189,5 @@ Maintain
 - GitHub Project Setup: ✅ Completed
 - Documentation Structure: ✅ Completed
 - Module 0.1: ✅ Completed
-- Module 0.2: ⏳ In Progress
+- Module 0.2: ✅ Completed
+- Module 0.3: ✅ Completed
