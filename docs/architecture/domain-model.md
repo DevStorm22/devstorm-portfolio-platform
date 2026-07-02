@@ -961,3 +961,438 @@ The following conditions must always remain true.
 
 ---
 
+# 17. Entity Lifecycles
+
+Each entity follows a defined lifecycle governed by business rules.
+
+---
+
+## 17.1 Project Lifecycle
+
+```text
+Draft
+
+↓
+
+Under Review
+
+↓
+
+Published
+
+↓
+
+Archived
+```
+
+### State Descriptions
+
+| State | Description |
+|--------|-------------|
+| Draft | Project is being prepared and is not visible publicly. |
+| Under Review | Project is complete but awaiting publication approval. |
+| Published | Project is visible to visitors. |
+| Archived | Project is retained for historical purposes but hidden from visitors. |
+
+---
+
+### Allowed Transitions
+
+| From | To |
+|------|----|
+| Draft | Under Review |
+| Under Review | Published |
+| Published | Archived |
+| Archived | Published |
+
+Business Rules
+
+- Draft projects are editable.
+- Published projects require mandatory metadata.
+- Archived projects remain accessible to administrators.
+
+---
+
+## 17.2 Report Lifecycle
+
+```text
+Draft
+
+↓
+
+Published
+
+↓
+
+Archived
+```
+
+Business Rules
+
+- Reports begin as Draft.
+- Publication requires a summary.
+- Archived reports are excluded from public listings.
+
+---
+
+## 17.3 Contact Message Lifecycle
+
+```text
+New
+
+↓
+
+Read
+
+↓
+
+Replied
+
+↓
+
+Archived
+```
+
+Business Rules
+
+- Every new submission starts with status "New".
+- Only authenticated administrators may change status.
+- Archived messages are retained for auditing purposes.
+
+---
+
+## 17.4 Resume Lifecycle
+
+```text
+Uploaded
+
+↓
+
+Active
+
+↓
+
+Archived
+```
+
+Business Rules
+
+- Only one Resume may be Active.
+- Activating a new Resume archives the previous one automatically.
+
+---
+
+## 17.5 Certification Lifecycle
+
+```text
+Created
+
+↓
+
+Published
+
+↓
+
+Expired (Optional)
+```
+
+Business Rules
+
+- Certifications without expiry remain permanently valid.
+- Expired certifications may still be displayed if configured.
+
+---
+
+# 18. Domain Services
+
+Some business operations involve multiple entities and do not naturally belong to a single entity. These operations are modeled as Domain Services.
+
+---
+
+## Authentication Service
+
+Responsibilities
+
+- Authenticate administrator
+- Validate credentials
+- Issue JWT
+- Verify access tokens
+
+Uses
+
+- User
+- Authentication
+
+---
+
+## Project Management Service
+
+Responsibilities
+
+- Create Project
+- Publish Project
+- Archive Project
+- Validate associated Category
+- Associate Technologies
+
+Uses
+
+- Project
+- Category
+- Technology
+
+---
+
+## Resume Service
+
+Responsibilities
+
+- Upload Resume
+- Replace active Resume
+- Archive previous Resume
+
+Uses
+
+- Resume
+
+---
+
+## Contact Service
+
+Responsibilities
+
+- Accept visitor messages
+- Validate submissions
+- Update message status
+- Trigger notifications
+
+Uses
+
+- Contact Message
+
+---
+
+## Report Service
+
+Responsibilities
+
+- Publish reports
+- Manage downloadable files
+- Categorize reports
+
+Uses
+
+- Report
+- Category
+
+---
+
+# 19. Business Process Workflows
+
+The following workflows describe major business operations.
+
+---
+
+## Visitor Contact Submission
+
+```text
+Visitor
+
+↓
+
+Complete Contact Form
+
+↓
+
+Validate Input
+
+↓
+
+Create Contact Message
+
+↓
+
+Assign Status "New"
+
+↓
+
+Store Message
+
+↓
+
+Administrator Notification
+```
+
+---
+
+## Publish Project Workflow
+
+```text
+Administrator
+
+↓
+
+Create Draft
+
+↓
+
+Assign Category
+
+↓
+
+Associate Technologies
+
+↓
+
+Validate Project
+
+↓
+
+Publish
+
+↓
+
+Visible to Visitors
+```
+
+---
+
+## Resume Replacement Workflow
+
+```text
+Administrator
+
+↓
+
+Upload Resume
+
+↓
+
+Validate File
+
+↓
+
+Archive Current Resume
+
+↓
+
+Activate New Resume
+
+↓
+
+Update Download Reference
+```
+
+---
+
+# 20. Domain Events (Future)
+
+Domain Events capture significant business occurrences.
+
+These events are not implemented in Version 1.0 but establish future architectural direction.
+
+---
+
+## Planned Events
+
+| Event | Trigger |
+|--------|----------|
+| ProjectPublished | Project becomes public |
+| ProjectArchived | Project is archived |
+| ResumeUploaded | New Resume uploaded |
+| ContactMessageReceived | Visitor submits contact form |
+| CertificationAdded | New Certification created |
+| ReportPublished | Report published |
+
+---
+
+## Event Consumers (Future)
+
+Potential consumers include:
+
+- Email Notification Service
+- Activity Logger
+- Analytics Engine
+- Audit Trail
+- Search Indexer
+
+---
+
+# 21. Audit Trail Strategy
+
+Certain business actions should be recorded for accountability.
+
+---
+
+## Auditable Actions
+
+- Administrator login
+- Project creation
+- Project update
+- Project deletion
+- Resume upload
+- Certification creation
+- Report publication
+- Contact status updates
+
+---
+
+## Audit Information
+
+Each audit entry should record:
+
+- Action
+- Entity
+- Entity Identifier
+- Performed By
+- Timestamp
+- Result
+
+---
+
+# 22. Domain Constraints
+
+The following constraints must always remain true.
+
+---
+
+## Uniqueness Constraints
+
+- Project slug
+- Report slug
+- Skill name
+- Social platform name
+- Administrator email
+
+---
+
+## Referential Constraints
+
+- Every Project references a valid Category.
+- Every Report references a valid Category.
+- Every Technology reference must exist.
+- Every Certification references a valid issuing Organization.
+
+---
+
+## Visibility Constraints
+
+Visitors may only access published content.
+
+Administrators have unrestricted access to managed resources.
+
+---
+
+# Part Status
+
+| Section | Status |
+|----------|--------|
+| Entity Lifecycles | Complete |
+| Domain Services | Complete |
+| Business Process Workflows | Complete |
+| Domain Events | Complete |
+| Audit Trail Strategy | Complete |
+| Domain Constraints | Complete |
+
+---
+
