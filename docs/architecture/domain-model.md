@@ -582,4 +582,382 @@ Allowed Values
 | Value Objects | Complete |
 
 ---
+# 10. Entity Relationship Matrix
+
+The following matrix describes the business relationships between domain entities.
+
+| Entity | Relationship | Target Entity | Cardinality |
+|----------|-------------|---------------|-------------|
+| User | manages | Project | One-to-Many |
+| User | manages | Skill | One-to-Many |
+| User | manages | Certification | One-to-Many |
+| User | manages | Report | One-to-Many |
+| User | manages | Resume | One-to-One |
+| User | manages | Social Link | One-to-Many |
+| User | receives | Contact Message | One-to-Many |
+| Project | belongs to | Category | Many-to-One |
+| Project | references | Technology | Many-to-Many |
+| Report | belongs to | Category | Many-to-One |
+| Certification | issued by | Organization | Many-to-One |
+
+---
+
+# 11. Aggregate Boundaries
+
+To maintain consistency and transactional integrity, related entities are grouped into aggregates.
+
+Each aggregate has one Aggregate Root responsible for maintaining business rules.
+
+---
+
+## Project Aggregate
+
+### Aggregate Root
+
+Project
+
+### Child Objects
+
+- Technology References
+
+### Responsibilities
+
+- Maintain project information.
+- Control publication state.
+- Validate associated technologies.
+
+### Transaction Boundary
+
+Creating or updating a Project is performed as a single business transaction.
+
+---
+
+## Skill Aggregate
+
+### Aggregate Root
+
+Skill
+
+### Responsibilities
+
+- Maintain skill information.
+- Control visibility.
+- Maintain proficiency level.
+
+---
+
+## Certification Aggregate
+
+### Aggregate Root
+
+Certification
+
+### Responsibilities
+
+- Maintain credential information.
+- Validate issuing organization.
+- Manage verification details.
+
+---
+
+## Report Aggregate
+
+### Aggregate Root
+
+Report
+
+### Responsibilities
+
+- Publish technical content.
+- Manage downloadable resources.
+- Maintain publication metadata.
+
+---
+
+## Contact Message Aggregate
+
+### Aggregate Root
+
+Contact Message
+
+### Responsibilities
+
+- Receive visitor communication.
+- Track processing status.
+- Preserve message history.
+
+---
+
+# 12. Ownership Rules
+
+Ownership determines which entity is responsible for lifecycle management.
+
+| Parent | Owns |
+|---------|------|
+| User | Projects |
+| User | Skills |
+| User | Certifications |
+| User | Reports |
+| User | Resume |
+| User | Social Links |
+| Project | Technology References |
+| Category | None |
+| Technology | None |
+
+---
+
+## Ownership Principles
+
+- Aggregate Roots control their child objects.
+- Child objects shall not modify parent entities directly.
+- Business rules are enforced by the Aggregate Root.
+- External entities interact only with Aggregate Roots.
+
+---
+
+# 13. Transaction Boundaries
+
+Business operations should execute atomically wherever practical.
+
+---
+
+## Project Creation
+
+Transaction includes:
+
+- Create Project
+- Associate Technologies
+- Validate Category
+- Generate Slug
+
+---
+
+## Certification Creation
+
+Transaction includes:
+
+- Validate issuing organization
+- Store certification
+- Generate verification metadata
+
+---
+
+## Contact Submission
+
+Transaction includes:
+
+- Validate visitor input
+- Store message
+- Assign initial status
+- Record submission timestamp
+
+---
+
+## Resume Upload
+
+Transaction includes:
+
+- Upload new resume
+- Archive previous active resume
+- Update active reference
+
+---
+
+# 14. Cross-Aggregate References
+
+Aggregates should reference one another by identity rather than embedding business logic.
+
+---
+
+## Project
+
+References:
+
+- Category
+- Technology
+
+Does Not Own:
+
+- Category
+- Technology
+
+---
+
+## Report
+
+References:
+
+- Category
+
+Does Not Own:
+
+- Category
+
+---
+
+## Certification
+
+References:
+
+- Organization
+
+Does Not Own:
+
+- Organization
+
+---
+
+## Contact Message
+
+Independent aggregate.
+
+No ownership dependencies.
+
+---
+
+# 15. Business Rules
+
+The following rules apply across multiple entities.
+
+---
+
+## Publication Rules
+
+Only published Projects and Reports are visible to Visitors.
+
+Draft content is accessible only to authenticated administrators.
+
+---
+
+## Resume Rules
+
+Exactly one Resume may be active.
+
+Uploading a new Resume automatically replaces the previously active version.
+
+---
+
+## Technology Rules
+
+A Technology may be referenced by multiple Projects.
+
+Deleting a Technology shall not automatically delete associated Projects.
+
+---
+
+## Category Rules
+
+A Category may organize both Projects and Reports.
+
+Deleting a Category requires reassignment or removal of dependent entities.
+
+---
+
+## Contact Rules
+
+Every Contact Message begins with the status:
+
+```text
+New
+```
+
+Permitted lifecycle:
+
+```text
+New
+
+↓
+
+Read
+
+↓
+
+Replied
+
+↓
+
+Archived
+```
+
+Status transitions shall occur only through authenticated administrative actions.
+
+---
+
+## Authentication Rules
+
+Only authenticated administrators may:
+
+- Create content
+- Update content
+- Delete content
+- Upload files
+- Manage messages
+
+Visitors have read-only access except for contact form submission.
+
+---
+
+# 16. Domain Invariants
+
+The following conditions must always remain true.
+
+---
+
+## Project
+
+- Slug is unique.
+- Title is mandatory.
+- Category must exist.
+- Publication requires a description.
+
+---
+
+## Skill
+
+- Name is unique.
+- Proficiency must be valid.
+
+---
+
+## Certification
+
+- Issue date precedes expiry date.
+- Title is mandatory.
+
+---
+
+## Report
+
+- Slug is unique.
+- Published reports include summaries.
+
+---
+
+## Resume
+
+- Exactly one active resume exists.
+
+---
+
+## Contact Message
+
+- Email is valid.
+- Message content is not empty.
+- Initial status is "New".
+
+---
+
+# Part Status
+
+| Section | Status |
+|----------|--------|
+| Entity Relationship Matrix | Complete |
+| Aggregate Boundaries | Complete |
+| Ownership Rules | Complete |
+| Transaction Boundaries | Complete |
+| Cross-Aggregate References | Complete |
+| Business Rules | Complete |
+| Domain Invariants | Complete |
+
+---
 
